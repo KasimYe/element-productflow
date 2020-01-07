@@ -1,19 +1,20 @@
 <template>
   <el-container style="height: 100vh;">
     <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-      <el-menu router :default-openeds="['1', '3']">
+      <el-menu router :default-openeds="['1','2', '3']">
         <el-submenu index="1">
           <template slot="title">
             <i class="el-icon-message"></i>消息管理
-          </template> 
-            <el-menu-item index="/Message/create">缺货提醒</el-menu-item>
+          </template>
+          <el-menu-item index="/Message/create">模板消息</el-menu-item>
+          <el-menu-item index="/Message/list">消息列表</el-menu-item>
         </el-submenu>
         <el-submenu index="2">
           <template slot="title">
             <i class="el-icon-setting"></i>用户管理
-          </template>          
-            <el-menu-item index="/OpenId/list">OpenId列表</el-menu-item>
-            <el-menu-item index="/User/list">用户列表</el-menu-item>          
+          </template>
+          <el-menu-item index="/OpenId/list">OpenId列表</el-menu-item>
+          <el-menu-item index="/User/list">用户列表</el-menu-item>
         </el-submenu>
         <el-submenu index="3">
           <template slot="title">
@@ -49,7 +50,7 @@
       </el-header>
 
       <el-main>
-        <router-view/>
+        <router-view />
       </el-main>
     </el-container>
   </el-container>

@@ -57,18 +57,39 @@ module.exports = app => {
         })
     })
 
-    router.delete('/user/:id', async (request, response) => {
-        console.log(request.params.id)
+    router.get('/users/:id', async (request, response) => {
+        const model = await User.findById(request.params.id)
+        response.send(model)
+    })
+
+    router.get('/users/openid/:id', async (request, response) => {
+        const model = await User.findOne({ openid: request.params.id })
+        response.send(model)
+    })
+
+    router.put('/users/:id', async (request, response) => {
+        const model = await User.findByIdAndUpdate(request.params.id, request.body)
+        response.send(model)
+    })
+
+    router.delete('/users/:id', async (request, response) => {
         await User.remove({ _id: request.params.id }, (err, user) => {
             if (err) return console.error(err);
             response.send(user);
         })
     })
 
+    router.get('/messages', async (request, response) => {
+        await TemplateMessage.find((err, messages) => {
+            if (err) return console.error(err);
+            response.send(messages);
+        })
+    })
+
     router.get('/templist', async (request, response) => {
         const access = await getToken()
         if (access.access_token) {
-            const res = await http.get(`template/get_all_private_template?access_token=${access.access_token}`)                        
+            const res = await http.get(`template/get_all_private_template?access_token=${access.access_token}`)
             response.send(res.data.template_list)
         } else {
             response.send(access)

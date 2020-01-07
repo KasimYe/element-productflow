@@ -2,26 +2,10 @@
   <div class="messagecreate">
     <el-form @submit.native.prevent="onSubmit" ref="form" :model="form" label-width="80px">
       <el-form-item label="发送对象">
-        <el-checkbox
-          :indeterminate="isIndeterminate"
-          v-model="checkAll"
-          @change="handleCheckAllChange"
-        >全选</el-checkbox>
-        <div style="margin: 15px 0;"></div>
-        <el-checkbox-group v-model="checkedUsers" @change="handleCheckedUsersChange">
-          <el-checkbox
-            v-for="user in users"
-            :label="user.openid"
-            :key="user.openid"
-          >{{user.nickname}}</el-checkbox>
-        </el-checkbox-group>
+        <el-transfer v-model="checkedUsers" :data="users" :titles="['等待队列', '发送队列']"></el-transfer>
       </el-form-item>
       <el-form-item label="消息模板">
-        <el-select
-          v-model="form.template_id"
-          placeholder="请选择消息模板"
-          @change="handleCheckedTempChange"
-        >
+        <el-select v-model="form.template_id" placeholder="请选择消息模板" @change="selectTemp">
           <el-option
             :key="temp.template_id"
             :label="temp.title"
@@ -35,29 +19,36 @@
       </el-form-item>
       <el-form-item label="first">
         <el-input v-model="form.data.first.value" placeholder="first value"></el-input>
-        <el-input v-model="form.data.first.color" placeholder="first color"></el-input>
+        <el-color-picker v-model="form.data.first.color" :predefine="predefineColors"></el-color-picker>
       </el-form-item>
       <el-form-item label="keyword1">
         <el-input v-model="form.data.keyword1.value" placeholder="keyword1 value"></el-input>
-        <el-input v-model="form.data.keyword1.color" placeholder="keyword1 color"></el-input>
+        <el-color-picker v-model="form.data.keyword1.color" :predefine="predefineColors"></el-color-picker>
       </el-form-item>
       <el-form-item label="keyword2">
         <el-input v-model="form.data.keyword2.value" placeholder="keyword2 value"></el-input>
-        <el-input v-model="form.data.keyword2.color" placeholder="keyword2 color"></el-input>
+        <el-color-picker v-model="form.data.keyword2.color" :predefine="predefineColors"></el-color-picker>
       </el-form-item>
       <el-form-item label="keyword3">
         <el-input v-model="form.data.keyword3.value" placeholder="keyword3 value"></el-input>
-        <el-input v-model="form.data.keyword3.color" placeholder="keyword3 color"></el-input>
+        <el-color-picker v-model="form.data.keyword3.color" :predefine="predefineColors"></el-color-picker>
       </el-form-item>
-      <el-form-item label="remark">
+      <el-form-item label="remark">        
         <el-input v-model="form.data.remark.value" placeholder="remark value"></el-input>
-        <el-input v-model="form.data.remark.color" placeholder="remark color"></el-input>
+        <el-color-picker v-model="form.data.remark.color" :predefine="predefineColors"></el-color-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" native-type="submit">立即创建</el-button>
-        <el-button>取消</el-button>
+        <el-button type="primary" @click="onPreview">预览</el-button>
+        <el-button type="primary" native-type="submit">创建</el-button>
       </el-form-item>
     </el-form>
+    <el-dialog title="消息预览" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">      
+      <el-input type="textarea" v-model="previewContent" :autosize="true"></el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="onSubmit">创建发送</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -71,6 +62,17 @@ export default {
       checkAll: false,
       temps: [],
       tempContent: "",
+      dialogVisible: false,
+      previewContent: "",
+      predefineColors: [
+        "#ff4500",
+        "#ff8c00",
+        "#ffd700",
+        "#90ee90",
+        "#00ced1",
+        "#1e90ff",
+        "#c71585"
+      ],
       form: {
         touser: "",
         template_id: "",
@@ -107,23 +109,29 @@ export default {
   methods: {
     async fetch() {
       const res = await this.$http.get(`users`);
+      for (let i = 0; i < res.data.length; i++) {
+        const el = res.data[i];
+        this.users.push({
+          key: el.openid,
+          label: el.nickname,
+          disabled: false
+        });
+      }
       const res2 = await this.$http.get("templist");
-      this.users = res.data;
       this.temps = res2.data;
     },
-    handleCheckAllChange(val) {
-      this.checkedUsers = val ? this.users : [];
-      this.isIndeterminate = false;
-    },
-    handleCheckedUsersChange(value) {
-      let checkedCount = value.length;
-      this.checkAll = checkedCount === this.users.length;
-      this.isIndeterminate =
-        checkedCount > 0 && checkedCount < this.users.length;
-    },
-    handleCheckedTempChange(value) {
+    selectTemp(value) {
       const tmp = this.temps.find(v => v.template_id === value);
       this.tempContent = tmp.content;
+    },
+    onPreview() {
+      this.previewContent = this.tempContent
+        .replace("{{first.DATA}}", this.form.data.first.value)
+        .replace("{{keyword1.DATA}}", this.form.data.keyword1.value)
+        .replace("{{keyword2.DATA}}", this.form.data.keyword2.value)
+        .replace("{{keyword3.DATA}}", this.form.data.keyword3.value)
+        .replace("{{remark.DATA}}", this.form.data.remark.value);
+      this.dialogVisible = true;
     },
     onSubmit() {
       this.checkedUsers.forEach(v => {

@@ -18,6 +18,7 @@ const schema = mongoose.Schema({
     subscribe_scene: { type: String },
     qr_scene: { type: Number },
     qr_scene_str: { type: String },
+    remarkname: { type: String }
 })
 
 module.exports=mongoose.model('User',schema)

@@ -4,6 +4,8 @@ GET {{uri}}userlist
 ###
 GET {{uri}}userinfo/oKpEn52SrhrbZrI4w4EfWm3c0_bw
 ###
+GET {{uri}}users/5e145981d2c4ba2e1cac4324
+###
 POST {{uri}}tempmsg
 content-type: application/json;charset=UTF-8
 
