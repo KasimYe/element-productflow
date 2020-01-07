@@ -6,20 +6,14 @@
           <template slot="title">
             <i class="el-icon-message"></i>消息管理
           </template> 
-            <el-menu-item index="1-1">缺货提醒</el-menu-item>
+            <el-menu-item index="/Message/create">缺货提醒</el-menu-item>
         </el-submenu>
         <el-submenu index="2">
           <template slot="title">
             <i class="el-icon-setting"></i>用户管理
-          </template>
-          <el-menu-item-group>
-            <template slot="title">用户信息</template>
-            <el-menu-item index="userlist">OpenId列表</el-menu-item>
-            <el-menu-item index="2-2">选项2</el-menu-item>
-          </el-menu-item-group>
-          <el-menu-item-group title="关联设置">
-            <el-menu-item index="2-3">选项3</el-menu-item>
-          </el-menu-item-group>      
+          </template>          
+            <el-menu-item index="/OpenId/list">OpenId列表</el-menu-item>
+            <el-menu-item index="/User/list">用户列表</el-menu-item>          
         </el-submenu>
         <el-submenu index="3">
           <template slot="title">

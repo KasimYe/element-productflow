@@ -3,7 +3,9 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Main from '../views/Main.vue'
 import About from '../views/About.vue'
-import UserList from '../views/User/OpenIdList.vue'
+import OpenIdList from '../views/User/OpenIdList.vue'
+import UserList from '../views/User/UserList.vue'
+import MessageCreate from '../views/Message/MessageCreate.vue'
 
 Vue.use(VueRouter)
 
@@ -14,8 +16,16 @@ const routes = [
     component: Main,
     children: [      
       {        
-        path: 'userlist',
+        path: '/OpenId/list',
+        component: OpenIdList
+      },
+      {        
+        path: '/User/list',
         component: UserList
+      },
+      {        
+        path: '/Message/create',
+        component: MessageCreate
       },
       {        
         path: 'home',

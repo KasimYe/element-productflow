@@ -1,36 +1,32 @@
 <template>
-  <el-table :data="tableData">
-    <el-table-column prop="date" label="日期" width="140"></el-table-column>
-    <el-table-column prop="name" label="姓名" width="120"></el-table-column>
-    <el-table-column prop="address" label="地址"></el-table-column>
-  </el-table>
+  <div class="openidlist">
+    <el-button type="primary" @click="updateUserList">更新数据库用户信息</el-button>
+    <el-table :data="openids">
+      <el-table-column type="index"></el-table-column>
+      <el-table-column prop="openid" label="OPENID" width="540"></el-table-column>
+    </el-table>
+  </div>
 </template>
+
 <script>
 export default {
   data() {
-    const item = {
-      date: "2016-05-02",
-      name: "王小虎",
-      address: "上海市普陀区金沙江路 1518 弄"
-    };
     return {
-      tableData: Array(20).fill(item)
+      openids: []
     };
   },
   methods: {
-    fetch() {
-      const _this = this;
-      _this.$http
-        .get(
-          `token?grant_type=${_this.$wxcof.granttype}&appid=${_this.$wxcof.appid}&secret=${_this.$wxcof.secret}`
-        )
-        .then(res => {
-          const access_token = res.data.access_token;
-          _this
-            .get(`user/get?access_token=${access_token}&next_openid=`)
-            .then(res => {
-              _this.item=res.data;
-            });
+    async fetch() {
+      const res = await this.$http.get(`openidlist`);
+      this.openids = res.data;
+    },
+    async updateUserList() {
+      await this.openids.forEach(v => {
+        this.$http.get(`userinfo/${v.openid}`)
+      });
+      this.$message({
+          message: '数据更新完毕',
+          type: 'success'
         });
     }
   },

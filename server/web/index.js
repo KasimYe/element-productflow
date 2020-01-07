@@ -3,6 +3,9 @@ module.exports = app => {
     const http = require('../http')
     const router = express.Router()
 
+    const User = require('../models/User')
+    const TemplateMessage = require('../models/TemplateMessage')
+
     const config = {
         token: 'test', //对应测试号接口配置信息里填的token
         appid: 'wx161e2dc4145a7605', //对应测试号信息里的appID
@@ -15,11 +18,15 @@ module.exports = app => {
         return res.data
     }
 
-    router.get('/userlist', async (request, response) => {
+    router.get('/openidlist', async (request, response) => {
         const access = await getToken()
         if (access.access_token) {
             const res = await http.get(`user/get?access_token=${access.access_token}&next_openid=`)
-            response.send(res.data.data.openid)
+            const opidarr = res.data.data.openid;
+            const oplist = opidarr.map(v => {
+                return { openid: v }
+            })
+            response.send(oplist)
         } else {
             response.send(access)
         }
@@ -31,7 +38,38 @@ module.exports = app => {
         const access = await getToken()
         if (access.access_token) {
             const res = await http.get(`user/info?access_token=${access.access_token}&openid=${openid}&lang=zh_CN`)
-            response.send(res.data);
+            let model = await User.findOne({ openid: openid })
+            if (model) {
+                await model.save(res.data)
+            } else {
+                model = await User.create(res.data)
+            }
+            response.send(model)
+        } else {
+            response.send(access)
+        }
+    })
+
+    router.get('/users', async (request, response) => {
+        await User.find((err, users) => {
+            if (err) return console.error(err);
+            response.send(users);
+        })
+    })
+
+    router.delete('/user/:id', async (request, response) => {
+        console.log(request.params.id)
+        await User.remove({ _id: request.params.id }, (err, user) => {
+            if (err) return console.error(err);
+            response.send(user);
+        })
+    })
+
+    router.get('/templist', async (request, response) => {
+        const access = await getToken()
+        if (access.access_token) {
+            const res = await http.get(`template/get_all_private_template?access_token=${access.access_token}`)                        
+            response.send(res.data.template_list)
         } else {
             response.send(access)
         }
@@ -40,13 +78,13 @@ module.exports = app => {
     router.post('/tempmsg', async (request, response) => {
         const access = await getToken()
         if (access.access_token) {
-            const res = await http.post(`message/template/send?access_token=${access.access_token}`, request.body)
+            const model = await TemplateMessage.create(request.body)
+            const res = await http.post(`message/template/send?access_token=${access.access_token}`, model)
             response.send(res.data);
         } else {
             response.send(access)
         }
     })
-
 
     app.use('/api', router)
 }

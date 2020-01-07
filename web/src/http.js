@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const http=axios.create({
-    baseURL:'https://api.weixin.qq.com/cgi-bin'
+    baseURL:'http://127.0.0.1:5003/api'
 })
 
 export default http
