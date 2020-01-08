@@ -1,6 +1,6 @@
 @uri=http://127.0.0.1:5003/api/
 ###
-GET {{uri}}userlist
+GET {{uri}}users
 ###
 GET {{uri}}userinfo/oKpEn52SrhrbZrI4w4EfWm3c0_bw
 ###
