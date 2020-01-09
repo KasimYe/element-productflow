@@ -45,7 +45,7 @@ const routes = [
         component: MessageList
       },
       {
-        path: 'home',
+        path: '/home',
         component: Home
       },
       {

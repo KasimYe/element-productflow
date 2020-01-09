@@ -2,9 +2,9 @@
   <div class="login">
     <el-row>
       <el-col :span="24">
-        <el-carousel :interval="4000" type="card" height="500px">
+        <el-carousel :interval="4000" type="card" height="400px">
           <el-carousel-item v-for="item in carousels" :key="item">
-            <el-image :src="item" fit="scale-down"></el-image>
+            <el-image :src="item" fit="contain"></el-image>
           </el-carousel-item>
         </el-carousel>
       </el-col>
@@ -38,27 +38,29 @@ export default {
         password: ""
       },
       carousels: [
-        "https://static.cargurus.com/images/site/2009/08/13/02/22/2010-saturn-vue-pic-32377-1600x1200.png",
-        "https://met.grandlyon.com/wp-content/uploads/le-grand-lyon-vu-du-ciel-automne-2014/20141020_jleone_part_dieu-4.jpg",
-        "https://upload.wloginikimedia.org/wikipedia/commons/thumb/0/04/Alfred_Sisley_001.jpg/1200px-Alfred_Sisley_001.jpg",
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Vue-Aerienne-WoodstockenBeauce.jpg/1200px-Vue-Aerienne-WoodstockenBeauce.jpg"
+        require("../assets/1.jpg"),
+        require("../assets/2.jpg"),
+        require("../assets/3.jpg"),
+        require("../assets/4.jpg")
       ]
     };
   },
   methods: {
     async loginin() {
-      const res = await this.$http.post("loginin", this.form);
+      const res = await this.$http.post("loginin", this.form).catch(error => {
+        this.$message({
+          message: error.response.data.message,
+          type: "error"
+        });
+      });
+
       if (res.data) {
         this.$message({
           message: "登录成功",
           type: "success"
         });
+        localStorage.setItem("token", res.data.token);
         this.$router.push("/main");
-      } else {
-        this.$message({
-          message: "账号密码错误",
-          type: "error"
-        });
       }
     }
   }

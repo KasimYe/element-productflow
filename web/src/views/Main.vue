@@ -1,7 +1,7 @@
 <template>
   <el-container style="height: 100vh;">
     <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-      <el-menu router :default-openeds="['1','2', '3']">
+      <el-menu router :default-openeds="['1','2']">
         <el-submenu index="1">
           <template slot="title">
             <i class="el-icon-message"></i>消息管理
@@ -38,15 +38,13 @@
 
     <el-container>
       <el-header style="text-align: right; font-size: 12px">
-        <el-dropdown>
+        <el-dropdown @command="exit">
           <i class="el-icon-setting" style="margin-right: 15px"></i>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>查看</el-dropdown-item>
-            <el-dropdown-item>新增</el-dropdown-item>
-            <el-dropdown-item>删除</el-dropdown-item>
+            <el-dropdown-item command="clear">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <span>王小虎</span>
+        <span>弘瑞微信公众号消息管理平台</span>
       </el-header>
 
       <el-main>
@@ -55,6 +53,24 @@
     </el-container>
   </el-container>
 </template>
+
+<script>
+export default {
+  methods:{
+    exit(){     
+      localStorage.clear()
+      this.$router.push("/");
+    }
+  },
+  created(){    
+    if (!localStorage.getItem('token')) {
+      this.$router.push("/");
+    }else{
+      this.$router.push("/home");
+    }
+  }
+}
+</script>
 
 <style>
 .el-header {
@@ -67,4 +83,5 @@
   color: #333;
 }
 </style>
+
 

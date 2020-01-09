@@ -1,8 +1,10 @@
 @uri=http://127.0.0.1:5658/api/
 ###
 GET {{uri}}users
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.NWUxNzI4ZjNiNzNjNzIyOTA0MzJmOTRh.c-SK5RQq0scMO4iNqaeoxyhJ2njDp9Sc2glKOkPeK7M
 ###
 GET {{uri}}userinfo/oKpEn52SrhrbZrI4w4EfWm3c0_bw
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.NWUxNzI4ZjNiNzNjNzIyOTA0MzJmOTRh.c-SK5RQq0scMO4iNqaeoxyhJ2njDp9Sc2glKOkPeK7M
 ###
 GET {{uri}}users/5e145981d2c4ba2e1cac4324
 ###
@@ -38,7 +40,9 @@ content-type: application/json;charset=UTF-8
 ###
 GET {{uri}}templist
 ###
-POST {{uri}}login
+GET {{uri}}messages
+###
+POST {{uri}}register
 content-type: application/json;charset=UTF-8
 
 {

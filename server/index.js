@@ -1,8 +1,9 @@
 const express=require('express')
 const http=require('./http')
+require('dotenv').config();
 
-const hostName = '127.0.0.1'; //ip或域名
-const port = 5658; //端口
+const hostName =process.env.API_HOST  //ip或域名
+const port = process.env.API_PORT //端口
 const app = express();
 
 app.use(require('cors')())

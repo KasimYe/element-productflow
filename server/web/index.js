@@ -1,6 +1,7 @@
 module.exports = app => {
     const express = require('express')
     const http = require('../http')
+    const jwt = require('jsonwebtoken')
     const router = express.Router()
 
     const User = require('../models/User')
@@ -8,18 +9,25 @@ module.exports = app => {
     const Login = require('../models/Login')
 
     const config = {
-        token: 'test', //对应测试号接口配置信息里填的token
-        appid: 'wx161e2dc4145a7605', //对应测试号信息里的appID
-        secret: '621eabda4c24eada9417370b35fad7ed', //对应测试号信息里的appsecret
-        grant_type: 'client_credential' //默认
+        token: process.env.WX_TOKEN, //对应测试号接口配置信息里填的token
+        appid: process.env.WX_APPID, //对应测试号信息里的appID
+        secret: process.env.WX_SECRET, //对应测试号信息里的appsecret
+        grant_type: process.env.WX_GRANT_TYPE //默认
     };
+
+    const auth = async (req, res, next) => {
+        const raw = String(req.headers.authorization).split(' ').pop()
+        const { id } = jwt.verify(raw, process.env.API_SECRET)
+        req.login = await Login.findById(id)
+        next()
+    }
 
     async function getToken() {
         const res = await http.get(`token?grant_type=${config.grant_type}&appid=${config.appid}&secret=${config.secret}`)
         return res.data
     }
 
-    router.get('/openidlist', async (request, response) => {
+    router.get('/openidlist', auth, async (request, response) => {
         const access = await getToken()
         if (access.access_token) {
             const res = await http.get(`user/get?access_token=${access.access_token}&next_openid=`)
@@ -34,7 +42,7 @@ module.exports = app => {
 
     })
 
-    router.get('/userinfo/:id', async (request, response) => {
+    router.get('/userinfo/:id', auth, async (request, response) => {
         const openid = request.params.id;
         const access = await getToken()
         if (access.access_token) {
@@ -49,21 +57,21 @@ module.exports = app => {
         } else {
             response.send(access)
         }
-    })
+    })   
 
-    router.get('/users', async (request, response) => {
+    router.get('/users', auth, async (request, response) => {
         await User.find((err, users) => {
             if (err) return console.error(err);
             response.send(users);
         })
     })
 
-    router.get('/users/:id', async (request, response) => {
+    router.get('/users/:id', auth, async (request, response) => {
         const model = await User.findById(request.params.id)
         response.send(model)
     })
 
-    router.get('/users/openid/:id', async (request, response) => {
+    router.get('/users/openid/:id', auth, async (request, response) => {
         const model = await User.findOne({ openid: request.params.id })
         response.send(model)
     })
@@ -73,21 +81,21 @@ module.exports = app => {
         response.send(model)
     })
 
-    router.delete('/users/:id', async (request, response) => {
+    router.delete('/users/:id', auth, async (request, response) => {
         await User.remove({ _id: request.params.id }, (err, user) => {
             if (err) return console.error(err);
             response.send(user);
         })
     })
 
-    router.get('/messages', async (request, response) => {
+    router.get('/messages', auth, async (request, response) => {
         await TemplateMessage.find((err, messages) => {
             if (err) return console.error(err);
             response.send(messages);
         })
     })
 
-    router.get('/templist', async (request, response) => {
+    router.get('/templist', auth, async (request, response) => {
         const access = await getToken()
         if (access.access_token) {
             const res = await http.get(`template/get_all_private_template?access_token=${access.access_token}`)
@@ -97,7 +105,7 @@ module.exports = app => {
         }
     })
 
-    router.post('/tempmsg', async (request, response) => {
+    router.post('/tempmsg', auth, async (request, response) => {
         const access = await getToken()
         if (access.access_token) {
             const model = await TemplateMessage.create(request.body)
@@ -108,7 +116,7 @@ module.exports = app => {
         }
     })
 
-    router.post('/login', async (request, response) => {
+    router.post('/register', auth, async (request, response) => {
         let model = await Login.findOne({ loginid: request.body.loginid })
         if (model) {
             model = await Login.findByIdAndUpdate(model._id, request.body)
@@ -119,8 +127,21 @@ module.exports = app => {
     })
 
     router.post('/loginin', async (request, response) => {
-        const model = await Login.findOne({ loginid: request.body.loginid, password: request.body.password })
-        response.send(model)
+        const model = await Login.findOne({ loginid: request.body.loginid })
+        if (!model) {
+            return response.status(422).send({
+                message: '用户名不存在'
+            })
+        }
+        const isPasswordValid = require('bcryptjs').compareSync(request.body.password, model.password)
+        if (!isPasswordValid) {
+            return response.status(422).send({
+                message: '密码错误'
+            })
+        }
+
+        const token = jwt.sign(String(model._id), process.env.API_SECRET)
+        response.send({ user: model, token })
     })
 
     app.use('/api', router)
