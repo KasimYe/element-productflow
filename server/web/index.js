@@ -5,6 +5,7 @@ module.exports = app => {
 
     const User = require('../models/User')
     const TemplateMessage = require('../models/TemplateMessage')
+    const Login = require('../models/Login')
 
     const config = {
         token: 'test', //对应测试号接口配置信息里填的token
@@ -105,6 +106,21 @@ module.exports = app => {
         } else {
             response.send(access)
         }
+    })
+
+    router.post('/login', async (request, response) => {
+        let model = await Login.findOne({ loginid: request.body.loginid })
+        if (model) {
+            model = await Login.findByIdAndUpdate(model._id, request.body)
+        } else {
+            model = await Login.create(request.body)
+        }
+        response.send(model);
+    })
+
+    router.post('/loginin', async (request, response) => {
+        const model = await Login.findOne({ loginid: request.body.loginid, password: request.body.password })
+        response.send(model)
     })
 
     app.use('/api', router)

@@ -1,4 +1,4 @@
-@uri=http://127.0.0.1:5003/api/
+@uri=http://127.0.0.1:5658/api/
 ###
 GET {{uri}}users
 ###
@@ -37,3 +37,19 @@ content-type: application/json;charset=UTF-8
 }
 ###
 GET {{uri}}templist
+###
+POST {{uri}}login
+content-type: application/json;charset=UTF-8
+
+{
+    "loginid":"admin",
+    "password":"hjf666888"
+}
+###
+POST {{uri}}loginin
+content-type: application/json;charset=UTF-8
+
+{
+    "loginid":"admin",
+    "password":"hjf666888"
+}
