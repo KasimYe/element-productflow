@@ -1,0 +1,7 @@
+API_HOST=127.0.0.1
+API_PORT=5658
+API_SECRET=kljdaxzkljlasdfrmnlkjasdalku
+WX_TOKEN=test
+WX_APPID=wx161e2dc4145a7605
+WX_SECRET=621eabda4c24eada9417370b35fad7ed
+WX_GRANT_TYPE=client_credential

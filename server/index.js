@@ -15,5 +15,5 @@ require('./plugins/db')(app)
 require('./web')(app)
 
 app.listen(port, hostName, function () {
-    console.log(`弘瑞公众号微信消息服务器运行在http://${hostName}:${port}`);
+    console.log(`春宇公众号微信消息服务器运行在http://${hostName}:${port}`);
 });
