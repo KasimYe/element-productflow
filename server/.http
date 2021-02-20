@@ -1,10 +1,9 @@
-@uri=http://127.0.0.1:5658/api/
+@uri=http://192.168.102.10:5658/api/
 ###
 GET {{uri}}users
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.NWUxNzI4ZjNiNzNjNzIyOTA0MzJmOTRh.c-SK5RQq0scMO4iNqaeoxyhJ2njDp9Sc2glKOkPeK7M
 ###
 GET {{uri}}userinfo/oKpEn52SrhrbZrI4w4EfWm3c0_bw
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.NWUxNzI4ZjNiNzNjNzIyOTA0MzJmOTRh.c-SK5RQq0scMO4iNqaeoxyhJ2njDp9Sc2glKOkPeK7M
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE4IiwiaWF0IjoxNTk3MTEwMzg2fQ.lPng6tRiBDGRixef2P4f5gNbsifXUjObwL6HYLqtNAs
 ###
 GET {{uri}}users/5e145981d2c4ba2e1cac4324
 ###
@@ -41,6 +40,8 @@ content-type: application/json;charset=UTF-8
 GET {{uri}}templist
 ###
 GET {{uri}}messages
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.NWVhN2RiNjhmMTQ2ZDcxNGVmOTIwZDE0.b99b7X9-IbmxTFUlE0ZVh9wG0lemmAKm1CbjPJ6d1Tc
+
 ###
 POST {{uri}}register
 content-type: application/json;charset=UTF-8
@@ -57,3 +58,6 @@ content-type: application/json;charset=UTF-8
     "loginid":"admin",
     "password":"hjf666888"
 }
+###
+GET {{uri}}openidlist
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.NWVhN2RiNjhmMTQ2ZDcxNGVmOTIwZDE0.b99b7X9-IbmxTFUlE0ZVh9wG0lemmAKm1CbjPJ6d1Tc
