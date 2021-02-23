@@ -52,7 +52,7 @@ module.exports = app => {
             );
             let model = await User.findOne({ openid: openid });
             if (model) {
-                await model.save(res.data);
+                await model.update(res.data);
             } else {
                 model = await User.create(res.data);
             }
